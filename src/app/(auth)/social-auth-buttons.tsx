@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -6,8 +8,11 @@ import {
 } from "@/lib/o-auth-providers";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 export function SocialAuthButtons() {
+  const searchParams = useSearchParams();
+
   return OAUTH_PROVIDERS.map((provider) => {
     const image = OAUTH_PROVIDER_DETAILS[provider].image;
 
@@ -16,7 +21,10 @@ export function SocialAuthButtons() {
         variant="outline"
         key={provider}
         onClick={async () =>
-          await authClient.signIn.social({ provider, callbackURL: "/" })
+          await authClient.signIn.social({
+            provider,
+            callbackURL: searchParams.get("redirect") || "/",
+          })
         }
       >
         <Image

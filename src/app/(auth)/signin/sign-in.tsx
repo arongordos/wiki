@@ -23,12 +23,13 @@ import { signInFormSchema } from "@/validators";
 import type { SignInForm } from "@/types";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { SocialAuthButtons } from "../social-auth-buttons";
 
 export function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [error, setError] = useState("");
 
@@ -46,7 +47,7 @@ export function SignIn() {
 
   async function handleSignIn(data: SignInForm) {
     await authClient.signIn.email(
-      { ...data, callbackURL: "/" },
+      { ...data, callbackURL: searchParams.get("redirect") || "/" },
       {
         onSuccess: () => {
           router.push("/");

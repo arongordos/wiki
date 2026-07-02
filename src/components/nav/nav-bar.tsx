@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { UserButton } from "@/components/nav/user-button";
 import { auth } from "@/lib/auth";
 import { PlusIcon } from "lucide-react";
-import { ModeToggle } from "./mode-toggle";
-import { Separator } from "../ui/separator";
+import { ModeToggle } from "@/components/nav/mode-toggle";
+import { Separator } from "@/components/ui/separator";
+import { AuthButtons } from "@/components/nav/auth-buttons";
 
 export async function NavBar() {
   const session = await auth.api.getSession({
@@ -37,15 +38,7 @@ export async function NavBar() {
               <UserButton />
             </>
           ) : (
-            <>
-              <Button asChild variant="outline">
-                <Link href="/signin">Sign In</Link>
-              </Button>
-
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </>
+            <AuthButtons />
           )}
         </div>
       </div>
