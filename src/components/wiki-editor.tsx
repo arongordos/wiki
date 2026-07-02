@@ -18,6 +18,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useRef, useState } from "react";
+import Image from "next/image";
+import { deleteFile, uploadFile } from "@/app/actions/upload";
 
 interface WikiEditorProps {
   title?: string;
@@ -25,6 +28,7 @@ interface WikiEditorProps {
   published?: boolean;
   isEditing?: boolean;
   articleId?: number;
+  imageUrl?: string | null;
 }
 
 export default function WikiEditor({
@@ -32,9 +36,13 @@ export default function WikiEditor({
   content = "",
   published = false,
   isEditing = false,
+  imageUrl,
   articleId,
 }: WikiEditorProps) {
   const router = useRouter();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
 
   const {
     handleSubmit,
@@ -52,11 +60,22 @@ export default function WikiEditor({
 
   async function handleArticleSubmit(data: Article) {
     try {
+      let imageUrl: string | undefined;
+
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadedFile = await uploadFile(formData);
+        imageUrl = uploadedFile.url;
+      }
+
       const payload = {
         title: data.title.trim(),
         slug: data.title.trim().toLowerCase().replace(/\s+/g, "-"),
         published: data.published,
         content: data.content.trim(),
+        imageUrl,
       };
 
       if (isEditing && articleId) {
@@ -72,6 +91,26 @@ export default function WikiEditor({
       }
     } catch (err) {
       console.error("Error submitting article:", err);
+    }
+  }
+
+  function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    console.log(file);
+
+    if (file) setFile(file);
+  }
+
+  async function handleRemoveFile() {
+    if (file) setFile(null);
+
+    if (imageUrl) {
+      await deleteFile(articleId!, imageUrl);
+      router.refresh();
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   }
 
@@ -111,6 +150,49 @@ export default function WikiEditor({
             />
             {errors.content && <FieldError errors={[errors.content]} />}
           </Field>
+
+          <Field>
+            <FieldLabel htmlFor="image">Image</FieldLabel>
+            <Input
+              ref={fileInputRef}
+              id="image"
+              type="file"
+              accept="image/*"
+              disabled={isSubmitting || !!imageUrl}
+              onChange={handleFileUpload}
+            />
+            {imageUrl && (
+              <span className="text-sm text-muted-foreground">
+                Please remove the image before uploading a new one.
+              </span>
+            )}
+          </Field>
+
+          {(file || imageUrl) && (
+            <div>
+              <Image
+                src={file ? URL.createObjectURL(file) : imageUrl || ""}
+                alt={file ? file.name : "Article Image"}
+                width={300}
+                height={300}
+                className="rounded-lg"
+              />
+              <div className="text-sm font-semibold">
+                {file ? file.name : null}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {file ? (file.size / 1024).toFixed(2) + " KB" : null}
+              </div>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleRemoveFile}
+                className="mt-2 cursor-pointer"
+              >
+                Remove
+              </Button>
+            </div>
+          )}
 
           <Field orientation="horizontal">
             <Controller

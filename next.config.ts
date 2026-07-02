@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
       },
+      new URL(`${process.env.BLOB_BASE_URL}/**`),
     ],
   },
 };

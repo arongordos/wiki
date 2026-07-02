@@ -6,7 +6,6 @@ import { auth } from "@/lib/auth";
 import { isArticleAuthor } from "@/db/authz";
 import { db } from "@/db";
 import { articles } from "@/db/schema";
-import { mockDelay } from "@/lib/utils";
 
 export type CreateArticleInput = {
   title: string;
@@ -31,8 +30,6 @@ async function requireUser() {
 }
 
 export async function createArticle(data: CreateArticleInput) {
-  await mockDelay(3000);
-
   const user = await requireUser();
 
   const [article] = await db
@@ -51,8 +48,6 @@ export async function createArticle(data: CreateArticleInput) {
 }
 
 export async function updateArticle(id: number, data: UpdateArticleInput) {
-  await mockDelay(3000);
-
   const user = await requireUser();
 
   if (!(await isArticleAuthor(user.id, id))) {

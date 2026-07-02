@@ -33,6 +33,7 @@ export default async function EditArticlePage({
       published={article.published}
       isEditing={true}
       articleId={Number(id)}
+      imageUrl={article.imageUrl}
     />
   );
 }

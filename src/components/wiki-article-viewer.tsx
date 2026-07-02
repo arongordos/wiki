@@ -150,22 +150,21 @@ export default function WikiArticleViewer({
         )}
       </div>
 
+      {article.imageUrl && (
+        <div className="mb-6">
+          <div className="relative w-full h-36 md:h-52 rounded-lg overflow-hidden">
+            <Image
+              src={article.imageUrl}
+              alt={`Image for ${article.title}`}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      )}
       <Card className="shadow">
         <CardContent>
-          {article.imageUrl && (
-            <div className="mb-8">
-              <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden">
-                <Image
-                  src={article.imageUrl}
-                  alt={`Image for ${article.title}`}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            </div>
-          )}
-
           <div>{article.content}</div>
         </CardContent>
       </Card>
