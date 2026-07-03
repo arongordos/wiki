@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import { isArticleAuthor } from "@/db/authz";
 import { db } from "@/db";
 import { articles } from "@/db/schema";
+import summarizeArticle from "@/ai/summarize";
+import { del } from "@vercel/blob";
 
 export type CreateArticleInput = {
   title: string;
@@ -32,11 +34,14 @@ async function requireUser() {
 export async function createArticle(data: CreateArticleInput) {
   const user = await requireUser();
 
+  const summary = await summarizeArticle(data.title, data.content);
+
   const [article] = await db
     .insert(articles)
     .values({
       ...data,
       authorId: user.id,
+      summary,
     })
     .returning({ id: articles.id });
 
@@ -54,15 +59,17 @@ export async function updateArticle(id: number, data: UpdateArticleInput) {
     throw new Error("❌ Forbidden");
   }
 
+  const summary = await summarizeArticle(data.title || "", data.content || "");
+
   await db
     .update(articles)
-    .set(data)
+    .set({ ...data, summary })
     .where(and(eq(articles.id, id)));
 
   return { success: true, message: "Article updated successfully" };
 }
 
-export async function deleteArticle(id: number) {
+export async function deleteArticle(id: number, url: string) {
   const user = await requireUser();
 
   if (!(await isArticleAuthor(user.id, id))) {
@@ -70,6 +77,8 @@ export async function deleteArticle(id: number) {
   }
 
   await db.delete(articles).where(eq(articles.id, id));
+
+  if (url) await del(url);
 
   return { success: true, message: "Article deleted successfully" };
 }

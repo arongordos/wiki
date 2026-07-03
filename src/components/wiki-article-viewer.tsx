@@ -111,7 +111,7 @@ export default function WikiArticleViewer({
               id="delete-article-form"
               action={async () => {
                 "use server";
-                await deleteArticle(article.id);
+                await deleteArticle(article.id, article.imageUrl || "");
                 redirect("/");
               }}
             >

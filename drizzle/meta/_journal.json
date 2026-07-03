@@ -15,6 +15,13 @@
       "when": 1782909317366,
       "tag": "0001_wakeful_shard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783074108641,
+      "tag": "0002_organic_black_cat",
+      "breakpoints": true
     }
   ]
 }

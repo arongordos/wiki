@@ -9,6 +9,7 @@ export async function getArticles() {
       author: user.name,
       title: articles.title,
       content: articles.content,
+      summary: articles.summary,
       createdAt: articles.createdAt,
     })
     .from(articles)

@@ -7,13 +7,13 @@ export default async function Home() {
 
   return (
     <main className="flex flex-col gap-6">
-      {articles.map(({ id, title, author, createdAt, content }) => (
+      {articles.map(({ id, title, author, createdAt, summary }) => (
         <WikiCard
           key={id}
           title={title}
           author={author ?? "Unknown"}
           date={formatDate(createdAt)}
-          summary={content}
+          summary={summary ?? "No summary available."}
           href={`/wiki/${id}`}
         />
       ))}
