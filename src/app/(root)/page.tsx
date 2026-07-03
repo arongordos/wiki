@@ -5,6 +5,9 @@ import { formatDate } from "@/lib/utils";
 export default async function Home() {
   const articles = await getArticles();
 
+  if (!articles.length)
+    return <h2 className="text-2xl text-center">No articles found.</h2>;
+
   return (
     <main className="flex flex-col gap-6">
       {articles.map(({ id, title, author, createdAt, summary }) => (
