@@ -1,5 +1,7 @@
 # Wiki
 
+[![CI](https://github.com/arongordos/wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/arongordos/wiki/actions/workflows/ci.yml)
+
 A wiki/blog app for writing, publishing, and reading articles, with AI-generated summaries.
 
 ## Stack
@@ -39,6 +41,7 @@ npm run build        # production build
 npm run start        # run production build
 npm run lint         # biome check
 npm run format       # biome format --write
+npm run typecheck    # tsc --noEmit
 npm run db:generate  # generate a drizzle migration from schema changes
 npm run db:migrate   # apply drizzle migrations
 npm run db:push      # push schema directly to the db (no migration file)
